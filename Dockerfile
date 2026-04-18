@@ -48,4 +48,9 @@ RUN chmod +x "/app/start.sh"
 
 ENV PYTHONPATH=/app
 
+WORKDIR /app/webapp
+RUN npm install
+WORKDIR /app
+
+
 CMD ["/app/start.sh"]
