@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     libgl1 \
     libxext6 \
     libxrender-dev \
+    npm \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -44,5 +45,7 @@ RUN python3 -c 'from depth_anything_3.api import DepthAnything3; DepthAnything3.
 COPY . .
 
 RUN chmod +x "/app/start.sh"
+
+ENV PYTHONPATH=/app
 
 CMD ["/app/start.sh"]
