@@ -26,3 +26,5 @@ Thumbs.db
 # Project specific
 tmp/
 backend_stats.txt
+.nix-portable
+.cache
