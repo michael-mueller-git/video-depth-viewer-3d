@@ -12,6 +12,71 @@
 <a name="english"></a>
 ## English
 
+### Deployment
+
+```yaml
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ${APP_NAME}
+  namespace: ${APP_NAMESPACE}
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.0.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  values:
+    defaultPodOptions:
+      runtimeClassName: "nvidia"
+    controllers:
+      ${APP_NAME}:
+        containers:
+          app:
+            image:
+              repository:  ghcr.io/michael-mueller-git/video-depth-viewer-3d
+              tag: "dev@sha256:9bb8d931c855b80ef22cd934a2ab16620712f8cc1126fec81bd9f21ff6b5259c"
+            env:
+              NVIDIA_VISIBLE_DEVICES: 0
+              NVIDIA_DRIVER_CAPABILITIES: all
+
+    service:
+      webui:
+        controller: ${APP_NAME}
+        ports:
+          http:
+            port: 5173
+          api:
+            port: 8000
+
+    ingress:
+      webui:
+        className: traefik
+        annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        hosts:
+          - host: &ingress1 "depth-viewer.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: webui
+                  port: http
+              - path: /api/
+                pathType: Prefix
+                service:
+                  identifier: webui
+                  port: api
+        tls:
+          - hosts:
+              - *ingress1
+```
+
 ### Overview
 VideoDepthViewer3D is a high-performance streaming MP4 depth viewer. It decodes uploaded videos on the backend, generates metric depth maps in real time using [**Depth Anything 3 (DA3METRIC-LARGE)**](https://github.com/ByteDance-Seed/Depth-Anything-3), and streams them to a Three.js/WebXR frontend via WebSocket.
 
