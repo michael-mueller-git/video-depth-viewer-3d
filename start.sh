@@ -15,10 +15,9 @@ echo "Starting Backend..."
 # Use default high-performance settings if not set
 export VIDEO_DEPTH_INFER_WORKERS=${VIDEO_DEPTH_INFER_WORKERS:-3}
 export VIDEO_DEPTH_DOWNSAMPLE=${VIDEO_DEPTH_DOWNSAMPLE:-1}
-export UV_CACHE_DIR=${UV_CACHE_DIR:-.uv-cache}
 export DA3_LOG_LEVEL=WARN
 
-uv run python3 scripts/run_backend.py --reload &
+python3 scripts/run_backend.py --reload &
 BACKEND_PID=$!
 
 # Start Frontend
